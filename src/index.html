@@ -63,69 +63,52 @@
             var parsedValues = JSON.parse(data);
 
             if (status == "success") {
-                var append = "";
-
+                // baskets
                 $.each(parsedValues, function (parsedK, parsedV) {
+                    var append = "";
+                    var formName = "form_" + parsedK;
+
+                    append += "<form name=" + formName + " id=" + formName + ">";
+                    append += "<div class='div_inputs'>";
+
+                    // products
                     $.each(parsedV, function (key, value) {
-                        var formName = "form_" + parsedK + "_" + key;
-
-                        append += "<form name=" + formName + " id=" + formName + ">";
-                        append += "<div class='div_inputs'>";
-
                         $.each(value, function (k, v) {
                             append += "<span>";
                             append += "<b>" + k + "</b>: " + v;
                             append += "</span>";
                             append += "<input type='hidden' name='" + k + "' value='" + v + "'>";
-
                             append += "<br>";
                         });
-
-                        append += "<button class='add_to_cart_btn' id='addToCartBtn_" + parsedK + "_" + key + "'>Add to cart</button>";
-
-                        append += "</div>";
                         append += "<br>";
-                        append += "</form>";
-
-                        $("#" + parsedK).append(append);
-
-                        var formData = $("#" + formName).serializeArray();
-
-                        //$("#addToCartBtn_" + parsedK + "_" + key).attr("onclick", "addToCart('" + formData + "')");
-
-                        // Add an event listener to the button
-                        $("#addToCartBtn_" + parsedK + "_" + key).on('click', function(event) {
-                            // Prevent the default behavior of the button
-                            event.preventDefault();
-
-                            appendCart = "";
-                            $.each(formData, function(k, v){
-                                console.log(v);
-                                appendCart += "<span>" + v.name + ": " + v.value + "</span><br>"
-                            });
-
-                            $("#cartDiv").append(appendCart);
-                            
-                        });
-                        
-                        append = "";
                     });
-                    append = "";
+
+                    append += "<button class='add_to_cart_btn' id='addToCartBtn_" + parsedK + "'>Add to cart</button>";
+                    
+                    append += "</div>";
+                    append += "</form>";
+
+                    $("#" + parsedK).append(append);
+
+                    var formData = $("#" + formName).serializeArray();
+
+                    // Add an event listener to the button
+                    $("#addToCartBtn_" + parsedK).on('click', function(event) {
+                        // Prevent the default behavior of the button
+                        event.preventDefault();
+
+                        appendCart = "";
+                        $.each(formData, function(k, v){
+                            console.log(v);
+                            appendCart += "<span>" + v.name + ": " + v.value + "</span><br>"
+                        });
+
+                        $("#cartDiv").append(appendCart);
+                        
+                    });
                 });
-
-                /*function addToCart(formData) {
-                    event.preventDefault();
-        
-                    console.log("addToCart");
-            
-                    console.log(formData);
-                }
-                */
             }
-            
         });
-
-        
     });
 
 </script>
