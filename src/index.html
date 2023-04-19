@@ -31,6 +31,11 @@
         padding: 5px 10px;
         margin: 10px;
     }
+    #cartDiv{
+        margin-left: auto;
+        margin-right: auto;
+        width: 25%;
+    }
 </style>
 
 <body>
@@ -48,7 +53,7 @@
             <h3>Basket3</h3>
         </div>
     </div>
-    <div style="display: flex" id="cartDiv">
+    <div id="cartDiv">
         <h3>Cart</h3>
     </div>
 </body>
@@ -64,7 +69,7 @@
 
             if (status == "success") {
                 // baskets
-                $.each(parsedValues, function (parsedK, parsedV) {
+                $.each(parsedValues.baskets, function (parsedK, parsedV) {
                     var append = "";
                     var formName = "form_" + parsedK;
 
@@ -74,6 +79,8 @@
                     // products
                     $.each(parsedV, function (key, value) {
                         $.each(value, function (k, v) {
+                            console.log(v);
+                            
                             append += "<span>";
                             append += "<b>" + k + "</b>: " + v;
                             append += "</span>";
@@ -99,7 +106,6 @@
 
                         appendCart = "";
                         $.each(formData, function(k, v){
-                            console.log(v);
                             appendCart += "<span>" + v.name + ": " + v.value + "</span><br>"
                         });
 
