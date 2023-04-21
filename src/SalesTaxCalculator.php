@@ -123,7 +123,7 @@ foreach ($baskets as &$basket) {
             // add the value to the product taxes total
             $productTaxes += $addBasicSalesTaxValue;
         }
-        
+
         // check if product is except from imported sales tax of 5%
         if ($imported) {
             $addImportDutyTaxValue = $price * IMPORT_DUTY / 100;
@@ -134,29 +134,25 @@ foreach ($baskets as &$basket) {
             // add the value to the product taxes total
             $productTaxes += $addImportDutyTaxValue;
         }
-        
+
         $productCost = $price * $qty;
 
 
-        print_r("ProductCost: ");
-        print_r($productCost);
-
         $totCost += $productCost;
         $totCost += $taxesTot;
-        
+
         // product sales tax
-        
         $vBasket['price_qty'] = $productCost;
         $vBasket['taxes'] = $productTaxes;
     }
 
-    $basket['sales_taxes'] = $taxesTot;
-    $basket['total'] = $totCost;
+    $basket['other_infos'] = [
+        'sales_taxes' => $taxesTot,
+        'total' => $totCost
+    ];
 }
 
-$return = [
-    "baskets" => $baskets,
-    'exceptTypes' => $exceptTypes
-];
+
+$return = $baskets;
 
 echo json_encode($return);

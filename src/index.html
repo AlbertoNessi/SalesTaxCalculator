@@ -19,7 +19,7 @@
         width: 25%;
     }
 
-    .div_inputs {
+    .div_inputs, .divCart{
         background-color: ddd;
         color: black;
         margin-bottom: 20px;
@@ -29,7 +29,7 @@
     .add_to_cart_btn {
         background-color: aquamarine;
         padding: 5px 10px;
-        margin: 10px;
+        margin: 10px 0px;
     }
     #cartDiv{
         margin-left: auto;
@@ -67,9 +67,9 @@
         $.get("SalesTaxCalculator.php", function (data, status) {
             var parsedValues = JSON.parse(data);
 
-            if (status == "success") {
+            if (status == "success") {  
                 // baskets
-                $.each(parsedValues.baskets, function (parsedK, parsedV) {
+                $.each(parsedValues, function (parsedK, parsedV) {
                     var append = "";
                     var formName = "form_" + parsedK;
 
@@ -78,18 +78,25 @@
 
                     // products
                     $.each(parsedV, function (key, value) {
+                        console.log(value);
+                        
                         $.each(value, function (k, v) {
-                            console.log(v);
-                            
-                            append += "<span>";
-                            append += "<b>" + k + "</b>: " + v;
-                            append += "</span>";
+
+                            // don't show the price * qty and the taxes value
+                            if(k != "price_qty" && k != "taxes" && k != "sales_taxes" && k != "total") {
+                                append += "<span>";
+                                append += "<b>" + k + "</b>: " + v;
+                                append += "</span>";
+                                
+                                append += "<br>";
+                            }
+                            // but still create the hidden input so that the forma can send its value i the cart
                             append += "<input type='hidden' name='" + k + "' value='" + v + "'>";
-                            append += "<br>";
                         });
                         append += "<br>";
                     });
 
+                    // create the button to add to the cart
                     append += "<button class='add_to_cart_btn' id='addToCartBtn_" + parsedK + "'>Add to cart</button>";
                     
                     append += "</div>";
@@ -97,20 +104,27 @@
 
                     $("#" + parsedK).append(append);
 
+                    // get the form data
                     var formData = $("#" + formName).serializeArray();
 
-                    // Add an event listener to the button
+                    // on click of the buttons add the values in the cart
                     $("#addToCartBtn_" + parsedK).on('click', function(event) {
+
                         // Prevent the default behavior of the button
                         event.preventDefault();
 
-                        appendCart = "";
+                        // show the results in the cart
+                        appendCart = "<div class='divCart'>";
+                        
                         $.each(formData, function(k, v){
-                            appendCart += "<span>" + v.name + ": " + v.value + "</span><br>"
+                            // show only the correct values
+                            if(v.name == "product_name" || v.name == "qty" || v.name == "price_qty" || v.name == "taxes") {
+                                appendCart += "<span><b>" + v.name + "</b>: " + v.value + "</span><br>"
+                            }
                         });
+                        appendCart += "</div>";
 
                         $("#cartDiv").append(appendCart);
-                        
                     });
                 });
             }
