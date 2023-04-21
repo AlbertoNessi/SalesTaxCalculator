@@ -103,7 +103,7 @@ $baskets = [
 ];
 
 foreach ($baskets as &$basket) {
-    $taxes = 0;
+    $taxesTot = 0;
     $totCost = 0;
 
     foreach ($basket as $kBasket => &$vBasket) {
@@ -111,51 +111,46 @@ foreach ($baskets as &$basket) {
         $imported = $vBasket['imported'];
         $price = $vBasket['price'];
         $qty = $vBasket['qty'];
+        $productTaxes = 0;
 
+        // check if product is except from basic sales tax of 10%
         if (!$except) {
             $addBasicSalesTaxValue = $price * BASIC_SALES_TAX / 100;
             // rounding
             $addBasicSalesTaxValue = ceil($addBasicSalesTaxValue * 20) / 20;
-            $taxes += $addBasicSalesTaxValue;
+            // add the value to the taxes total
+            $taxesTot += $addBasicSalesTaxValue;
+            // add the value to the product taxes total
+            $productTaxes += $addBasicSalesTaxValue;
         }
         
+        // check if product is except from imported sales tax of 5%
         if ($imported) {
             $addImportDutyTaxValue = $price * IMPORT_DUTY / 100;
             // rounding
             $addImportDutyTaxValue = ceil($addImportDutyTaxValue * 20) / 20;
-            $taxes += $addImportDutyTaxValue;
+            // add the value to the taxes total
+            $taxesTot += $addImportDutyTaxValue;
+            // add the value to the product taxes total
+            $productTaxes += $addImportDutyTaxValue;
         }
         
-        // totals
-        $priceQty = $price * $qty;
+        $productCost = $price * $qty;
 
-        // print_r($price);
-        // print_r(" * ");
-        // print_r($qty);
-        // print_r(" = ");
-        // print_r($priceQty);
-        
-        // print_r(" --NEXT-- ");
-        
-        $totCost += $priceQty;
-        $totCost += $taxes;
-        
-        // $taxes *= $qty;
-        // $totCost *= $qty;
 
+        print_r("ProductCost: ");
+        print_r($productCost);
+
+        $totCost += $productCost;
+        $totCost += $taxesTot;
+        
         // product sales tax
-        print_r($priceQty);
-        print_r("  ");
         
-        $vBasket['price_qty'] = $priceQty;
-        $vBasket['taxes'] = $taxes;
-
-        $taxes = 0;
-        
+        $vBasket['price_qty'] = $productCost;
+        $vBasket['taxes'] = $productTaxes;
     }
-    // print_r(" ---FINE--- ");
 
-    $basket['sales_taxes'] = $taxes;
+    $basket['sales_taxes'] = $taxesTot;
     $basket['total'] = $totCost;
 }
 
